@@ -312,24 +312,31 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.stickerZoneContent.appendChild(createShortcutCard(shortcut, 'stickerZone'));
         });
     };
-    const populatePrintLibrary = () => {
+const populatePrintLibrary = () => {
         if (!elements.libraryItemsContainer) return;
         elements.libraryItemsContainer.innerHTML = '';
         const lang = localStorage.getItem('cheatSheetLang') || 'en';
+        
+        // Default shortcuts from the hardcoded object
         const defaultShortcuts = translations[lang].shortcuts;
-        const customShortcutsFromStorage = JSON.parse(localStorage.getItem('customShortcuts_v2')) || [];
-        const customShortcutsTranslated = customShortcutsFromStorage.map(item => ({
+
+        // FIX: Use the global 'customShortcuts' variable which is loaded from Gist or local backup
+        const translatedCustomShortcuts = customShortcuts.map(item => ({
             keys: item.keys,
             action: lang === 'ar' ? item.actionAR : item.actionEN
         }));
-        const allShortcuts = [...defaultShortcuts, ...customShortcutsTranslated];
+
+        const allShortcuts = [...defaultShortcuts, ...translatedCustomShortcuts];
+
         allShortcuts.forEach((shortcut) => {
             const item = document.createElement('div');
             item.className = 'library-item';
-            item.textContent = shortcut.action;
+            item.textContent = shortcut.action; // Show the action text for clarity
             item.draggable = true;
             item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('application/json', JSON.stringify(shortcut));
+                // Pass the original key/action pair for rendering the card
+                const originalShortcutData = { keys: shortcut.keys, action: shortcut.action };
+                e.dataTransfer.setData('application/json', JSON.stringify(originalShortcutData));
             });
             elements.libraryItemsContainer.appendChild(item);
         });
