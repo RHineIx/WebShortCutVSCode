@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.cheatSheet.style.width = `${width}mm`;
         elements.sizeSlider.value = width;
         elements.sliderValueDisplay.textContent = `${width}mm`;
-        const sizeMapping = { s: '90', m: '180', l: '240' };
+        const sizeMapping = { s: '135', m: '180', l: '205' };
         Object.values(elements.sizeControls).forEach(btn => btn.classList.remove('active'));
         for (const [key, value] of Object.entries(sizeMapping)) {
             if (String(width) === value) {
@@ -401,7 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function setupEventListeners() {
         addListener(elements.sizeSlider, 'input', (e) => updateSize(e.target.value));
-        Object.entries({ s: 90, m: 180, l: 240 }).forEach(([key, width]) => addListener(elements.sizeControls[key], 'click', () => updateSize(width)));
+        addListener(elements.sizeControls.s, 'click', () => updateSize('135'));
+        addListener(elements.sizeControls.m, 'click', () => updateSize('180'));
+        addListener(elements.sizeControls.l, 'click', () => updateSize('205'));
         Object.entries(elements.spacingControls).forEach(([name, button]) => addListener(button, 'click', () => setSpacing(name)));
         addListener(elements.themeToggleBtn, 'click', () => setTheme(document.body.classList.contains('theme-dark') ? 'light' : 'dark'));
         Object.entries(elements.viewControls).forEach(([name, button]) => addListener(button, 'click', () => setView(name)));
@@ -483,7 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!activeAction.type) return;
             e.preventDefault();
             let snapped = false;
-            
             if (activeAction.type === 'move') {
                 const dx = e.clientX - activeAction.startX;
                 const dy = e.clientY - activeAction.startY;
@@ -503,13 +504,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickerZoneState.x = newX;
                 stickerZoneState.y = newY;
                 if(elements.stickerZone) elements.stickerZone.classList.toggle('is-snapping', snapped);
-            
             } else if (activeAction.type === 'resize') {
                 const dx = e.clientX - activeAction.startX;
                 const dy = e.clientY - activeAction.startY;
                 let newWidth = Math.max(50, activeAction.startWidth + dx);
                 let newHeight = Math.max(50, activeAction.startHeight + dy);
-                
                 const canvasRect = elements.canvas.getBoundingClientRect();
                 const rightEdge = stickerZoneState.x + newWidth;
                 const bottomEdge = stickerZoneState.y + newHeight;
@@ -518,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 stickerZoneState.width = newWidth;
                 stickerZoneState.height = newHeight;
                 if(elements.stickerZone) elements.stickerZone.classList.toggle('is-snapping', snapped);
-
                 if (activeAction.isScaling) {
                     const widthRatio = stickerZoneState.width / activeAction.startWidth;
                     stickerZoneState.scale = activeAction.initialScale * widthRatio;
@@ -533,13 +531,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('mouseup', () => {
             if(elements.stickerZone) elements.stickerZone.classList.remove('is-snapping');
             document.body.classList.remove('is-designing');
-            
             if (activeAction.type === 'resize' && !activeAction.isScaling) {
                 stickerZoneState.contentWidth = null;
                 stickerZoneState.contentHeight = null;
                 renderStickerZone();
             }
-            
             activeAction.type = null;
             activeAction.isScaling = false;
         });
