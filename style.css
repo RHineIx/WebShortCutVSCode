@@ -168,6 +168,21 @@ body.theme-light .control-group button:hover, body.theme-light .control-button:h
     border: 2px dashed rgba(128, 128, 128, 0.4);
     pointer-events: none; z-index: 1;
 }
+.library-item.is-added {
+    background-color: var(--key-bg-color);
+    position: relative;
+}
+
+.library-item.is-added::after {
+    content: '✓';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--accent-color);
+    font-weight: bold;
+    font-style: normal;
+}
 body.theme-dark #a4-canvas { background-color: #333; }
 body.theme-dark #a4-canvas::before { border-color: rgba(255, 255, 255, 0.2); }
 

@@ -312,29 +312,26 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.stickerZoneContent.appendChild(createShortcutCard(shortcut, 'stickerZone'));
         });
     };
-const populatePrintLibrary = () => {
+    const populatePrintLibrary = () => {
         if (!elements.libraryItemsContainer) return;
         elements.libraryItemsContainer.innerHTML = '';
         const lang = localStorage.getItem('cheatSheetLang') || 'en';
-        
-        // Default shortcuts from the hardcoded object
         const defaultShortcuts = translations[lang].shortcuts;
-
-        // FIX: Use the global 'customShortcuts' variable which is loaded from Gist or local backup
         const translatedCustomShortcuts = customShortcuts.map(item => ({
             keys: item.keys,
             action: lang === 'ar' ? item.actionAR : item.actionEN
         }));
-
         const allShortcuts = [...defaultShortcuts, ...translatedCustomShortcuts];
-
+        const keysInZone = new Set(stickerZoneState.shortcuts.map(s => s.keys));
         allShortcuts.forEach((shortcut) => {
             const item = document.createElement('div');
             item.className = 'library-item';
-            item.textContent = shortcut.action; // Show the action text for clarity
+            if (keysInZone.has(shortcut.keys)) {
+                item.classList.add('is-added');
+            }
+            item.textContent = shortcut.action;
             item.draggable = true;
             item.addEventListener('dragstart', (e) => {
-                // Pass the original key/action pair for rendering the card
                 const originalShortcutData = { keys: shortcut.keys, action: shortcut.action };
                 e.dataTransfer.setData('application/json', JSON.stringify(originalShortcutData));
             });
@@ -437,6 +434,7 @@ const populatePrintLibrary = () => {
             if (confirm("Are you sure you want to remove all shortcuts from the sticker?")) {
                 stickerZoneState.shortcuts = [];
                 renderStickerZone();
+                populatePrintLibrary();
             }
         });
         addListener(elements.printLayoutBtn, 'click', printDesignedLayout);
@@ -448,6 +446,7 @@ const populatePrintLibrary = () => {
             shortcut.instanceId = Date.now();
             stickerZoneState.shortcuts.push(shortcut);
             renderStickerZone();
+            populatePrintLibrary();
         });
         addListener(elements.stickerZoneContent, 'click', (e) => {
             const deleteBtn = e.target.closest('.sticker-zone-card-delete');
@@ -455,6 +454,7 @@ const populatePrintLibrary = () => {
                 const instanceIdToDelete = deleteBtn.dataset.instanceId;
                 stickerZoneState.shortcuts = stickerZoneState.shortcuts.filter(s => s.instanceId != instanceIdToDelete);
                 renderStickerZone();
+                populatePrintLibrary();
             }
         });
         addListener(elements.canvas, 'mousedown', (e) => {
