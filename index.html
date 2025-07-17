@@ -20,7 +20,7 @@
             <button id="size-s">S</button>
             <button id="size-m">M</button>
             <button id="size-l">L</button>
-            <input type="range" id="size-slider" min="140" max="230">
+            <input type="range" id="size-slider" min="80" max="300">
             <span id="slider-value"></span>
         </div>
         <div class="control-group">
@@ -52,6 +52,7 @@
             </select>
         </div>
         <div class="control-group">
+             <button id="sync-settings-btn" title="Sync Settings" class="control-button"><span class="material-symbols-outlined">cloud_sync</span></button>
              <button id="open-print-editor-btn" title="Layout Designer" class="control-button"><span class="material-symbols-outlined">design_services</span></button>
              <button id="add-shortcut-btn" title="Add New Shortcut" class="control-button"><span class="material-symbols-outlined">add</span></button>
              <button id="theme-toggle" title="Toggle Theme" class="control-button"></button>
@@ -72,6 +73,21 @@
             <div class="modal-actions">
                 <button type="submit" id="save-shortcut-btn">Save</button>
                 <button type="button" id="cancel-shortcut-btn">Cancel</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="sync-modal">
+        <form id="sync-form">
+            <h3>Sync with GitHub Gist</h3>
+            <p>Your custom shortcuts will be saved to a secret Gist on your GitHub account.</p>
+            <label for="gist-id-input">Gist ID</label>
+            <input type="text" id="gist-id-input" placeholder="e.g., a1b2c3d4e5f6..." required>
+            <label for="github-token-input">GitHub Personal Access Token (with 'gist' scope)</label>
+            <input type="password" id="github-token-input" placeholder="ghp_..." required>
+            <div class="modal-actions">
+                <button type="submit">Save Settings</button>
+                <button type="button" id="cancel-sync-btn">Cancel</button>
             </div>
         </form>
     </dialog>
